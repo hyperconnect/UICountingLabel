@@ -186,11 +186,20 @@
         self.timer = nil;
         self.progress = self.totalTime;
     }
-    
-    [self setTextValue:[self currentValue]];
-    
-    if (self.progress == self.totalTime) {
-        [self runCompletionBlock];
+
+    @try {
+        [self setTextValue:[self currentValue]];
+
+        if (self.progress == self.totalTime) {
+            [self runCompletionBlock];
+        }
+    }
+    @catch (NSException *theException) {
+        if (self.timer != nil) {
+            [self.timer invalidate];
+        }
+        self.timer = nil;
+        NSLog(@"UICountingLabel.updateValue throws exception: %@", theException);
     }
 }
 
